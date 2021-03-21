@@ -1,12 +1,18 @@
 import React from 'react';
-import logo from './logo.svg';
+import {BrowserRouter as Router} from 'react-router-dom';
+import Sidebar from './components/Sidebar';
+import Navbar from './components/Navbar';
 import './App.css';
+
 
 function App() {
   return (
-    <div className="App">
-      ADMIN CLICKNIK
-    </div>
+    <Router>
+      <div className="flex">
+        <Sidebar />
+        <Navbar />
+      </div>
+    </Router>
   );
 }
 
