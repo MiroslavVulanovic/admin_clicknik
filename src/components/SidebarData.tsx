@@ -1,4 +1,15 @@
-export const SidebarData = [
+export interface SidebarDataItem {
+  title: string,
+  path: string,
+  subNav?: SidebarDataSubitem[]
+}
+
+export interface SidebarDataSubitem {
+  title: string,
+  path: string
+}
+
+export const SidebarData: SidebarDataItem[] = [
   {
     title: 'Dashboard',
     path: '/dashboard',

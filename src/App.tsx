@@ -8,7 +8,7 @@ import './App.css';
 function App() {
   return (
     <Router>
-      <div className="flex">
+      <div className="flex flex-row">
         <Sidebar />
         <Navbar />
       </div>

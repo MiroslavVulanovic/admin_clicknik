@@ -2,7 +2,11 @@ import React from 'react';
 
 const Navbar = () => {
     return (
-        <div className="flex-grow border-b-default border-gray-600 h-10"></div>
+        <div className="w-10/12 ">
+            <div className="p-4 flex justify-end items-center border-b border-gray-600 h-10">
+                bla truc
+            </div>
+        </div>
     );
 }
 
