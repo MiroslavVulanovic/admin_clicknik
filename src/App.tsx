@@ -1,18 +1,20 @@
 import React from 'react';
-import {BrowserRouter as Router} from 'react-router-dom';
-import Sidebar from './components/Sidebar';
-import Navbar from './components/Navbar';
+import {BrowserRouter, Route, Switch} from 'react-router-dom';
+import LandingPage from './components/LandingPage';
+import AppLayout from './components/AppLayout';
+import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
 
-function App() {
+const App = () => {
   return (
-    <Router>
-      <div className="flex flex-row">
-        <Sidebar />
-        <Navbar />
+    <BrowserRouter>
+      <div>
+        <Route exact path="/" component={LandingPage} />
+        <ProtectedRoute exact path="/app" component={AppLayout} />
+        {/* <Route path="*" component={() => '404 NOT FOUND'} /> */}
       </div>
-    </Router>
+    </BrowserRouter>
   );
 }
 
