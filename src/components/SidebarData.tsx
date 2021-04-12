@@ -1,71 +1,111 @@
+import * as AiIcons from 'react-icons/ai';
+import * as RiIcons from 'react-icons/ri';
+
 export interface SidebarDataItem {
   title: string,
   path: string,
+  icon: JSX.Element,
+  iconClosed?: JSX.Element,
+  iconOpened?: JSX.Element,
   subNav?: SidebarDataSubitem[]
 }
 
 export interface SidebarDataSubitem {
   title: string,
-  path: string
+  path: string,
+  icon: JSX.Element
 }
 
 export const SidebarData: SidebarDataItem[] = [
   {
-    title: 'Dashboard',
-    path: '/dashboard',
+    title: 'Kontrolna tabla',
+    path: '/app',
+    icon: <AiIcons.AiFillDashboard />
   },
   {
-    title: 'Posts',
-    path: '/posts',
+    title: 'Proizvodi',
+    path: '#',
+    icon: <AiIcons.AiFillGift />,
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
     subNav: [
       {
-        title: 'List',
-        path: '/posts/list',
+        title: 'Lista',
+        path: '/products/list',
+        icon: <AiIcons.AiFillDatabase />
       },
       {
-        title: 'Add new',
-        path: '/posts/addnew',
+        title: 'Dodaj novi',
+        path: '/products/addnew',
+        icon: <AiIcons.AiFillPlusCircle />
       }
     ]
   },
   {
-    title: 'Categories',
-    path: '/categories',
+    title: 'Recepti',
+    path: '#',
+    icon: <AiIcons.AiFillExperiment />,
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
     subNav: [
       {
-        title: 'List',
-        path: '/categories/list',
+        title: 'Lista',
+        path: '/receips/list',
+        icon: <AiIcons.AiFillDatabase />
       },
       {
-        title: 'Add new',
-        path: '/categories/addnew',
+        title: 'Dodaj novi',
+        path: '/receips/addnew',
+        icon: <AiIcons.AiFillPlusCircle />
       }
     ]
   },
   {
-    title: 'Comments',
-    path: '/comments',
-  },
-  {
-    title: 'Users',
-    path: '/users',
+    title: 'Pouke',
+    path: '#',
+    icon: <AiIcons.AiFillBulb />,
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
     subNav: [
       {
-        title: 'List',
-        path: '/users/list',
+        title: 'Lista',
+        path: '/teachings/list',
+        icon: <AiIcons.AiFillDatabase />
       },
       {
-        title: 'Add new',
-        path: '/users/addnew',
+        title: 'Dodaj novi',
+        path: '/teachings/addnew',
+        icon: <AiIcons.AiFillPlusCircle />
       }
     ]
   },
   {
-    title: 'Profile',
+    title: 'Dešavanja',
+    path: '#',
+    icon: <AiIcons.AiFillNotification />,
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
+    subNav: [
+      {
+        title: 'Lista',
+        path: '/events/list',
+        icon: <AiIcons.AiFillDatabase />
+      },
+      {
+        title: 'Dodaj novo',
+        path: '/events/addnew',
+        icon: <AiIcons.AiFillPlusCircle />
+      }
+    ]
+  },
+  {
+    title: 'Profil',
     path: '/profile',
+    icon: <AiIcons.AiFillIdcard />
   },
   {
-    title: 'Settings',
+    title: 'Podešavanja',
     path: '/settings',
+    icon: <AiIcons.AiFillSetting />
   }
 ];

@@ -1,14 +1,16 @@
-class Auth  {
+class Auth {
+    authenticated: boolean;
+
     constructor() {
         this.authenticated  = false;
     }
 
-    login(cb) {
+    login(cb: any) {
         this.authenticated = true;
         cb();
     }
 
-    logout(cb) {
+    logout(cb: any) {
         this.authenticated = false;
         cb();
     }
