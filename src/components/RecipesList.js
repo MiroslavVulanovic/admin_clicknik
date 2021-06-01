@@ -1,19 +1,16 @@
-import React from 'react'
-import { useState, useEffect } from 'react'
-import Table from '@material-ui/core/Table'
-import TableBody from '@material-ui/core/TableBody'
-import TableCell from '@material-ui/core/TableCell'
-import TableContainer from '@material-ui/core/TableContainer'
-import TableHead from '@material-ui/core/TableHead'
-import TableRow from '@material-ui/core/TableRow'
-import Paper from '@material-ui/core/Paper'
-import Checkbox from '@material-ui/core/Checkbox'
-import DeleteIcon from '@material-ui/icons/Delete'
-import EditIcon from '@material-ui/icons/Edit'
-import { Link } from 'react-router-dom'
-import Button from '@material-ui/core/Button'
-import IconButton from '@material-ui/core/IconButton'
-import { makeStyles } from '@material-ui/core/styles'
+import Checkbox from '@material-ui/core/Checkbox';
+import IconButton from '@material-ui/core/IconButton';
+import Paper from '@material-ui/core/Paper';
+import { makeStyles } from '@material-ui/core/styles';
+import Table from '@material-ui/core/Table';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableRow from '@material-ui/core/TableRow';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import React from 'react';
+import { useEffect, useState } from 'react';
+import { DataGrid } from '@material-ui/data-grid';
 
 const nizObjekata = [
   {
@@ -58,7 +55,42 @@ const nizObjekata = [
     opisRecepta: 'mrsno',
     vrijeme: 25,
   },
-]
+];
+
+const columns = [
+  { field: 'id', headerName: 'ID', width: 90 },
+  { field: 'firstName', headerName: 'First name', width: 150 },
+  { field: 'lastName', headerName: 'Last name', width: 150 },
+  {
+    field: 'age',
+    headerName: 'Age',
+    type: 'number',
+    width: 110,
+  },
+  {
+    field: 'fullName',
+    headerName: 'Full name',
+    description: 'This column has a value getter and is not sortable.',
+    sortable: false,
+    width: 160,
+    valueGetter: (params) =>
+      `${params.getValue(params.id, 'firstName') || ''} ${
+        params.getValue(params.id, 'lastName') || ''
+      }`,
+  },
+];
+
+const rows = [
+  { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
+  { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
+  { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
+  { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
+  { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
+  { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
+  { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
+  { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
+  { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
+];
 
 const useStyles = makeStyles({
   table: {
@@ -80,53 +112,69 @@ export default function ProductsList() {
     setCheck(newCheck)
   }
 
+  const setSelectionModel = (event) => {
+    console.log('Changed', event);
+    selectionModel.push(event);
+  }
+
+  const selectionModel = [];
+
   return (
-    <TableContainer component={Paper}>
-      <Table className={classes.table} aria-label='simple table'>
-        <TableRow>
-          <TableCell padding='checkbox'>
-            <Checkbox
-              onChange={(e) => checkAll(e.target.checked)}
-              color='primary'
-            />
-          </TableCell>
-          <TableCell style={{ fontWeight: 'bold' }}>Id</TableCell>
-          <TableCell style={{ fontWeight: 'bold' }}>Naziv proizvoda</TableCell>
-          <TableCell style={{ fontWeight: 'bold' }}>Opis proizvoda</TableCell>
-          <TableCell style={{ fontWeight: 'bold' }}>Vrijeme</TableCell>
-          <TableCell style={{ fontWeight: 'bold' }}>Obrisi</TableCell>
-          <TableCell style={{ fontWeight: 'bold' }}>Uredi</TableCell>
-        </TableRow>
-        {check.map((item, i) => (
-          <TableRow key={i}>
-            <TableCell padding='checkbox'>
-              <Checkbox
-                color='default'
-                //style={{ color: 'green' }}
-                //indeterminate
-                disabled={false}
-                disableRipple={false}
-                checked={item.checked}
-                onChange={(e) => checkOne(item.id)}
-              />
-            </TableCell>
-            <TableCell>{item.id}</TableCell>
-            <TableCell>{item.imeRecepta}</TableCell>
-            <TableCell>{item.opisRecepta}</TableCell>
-            <TableCell>{item.vrijeme}</TableCell>
-            <TableCell padding='checkbox'>
-              <IconButton style={{ outline: 'none' }}>
-                <DeleteIcon />
-              </IconButton>
-            </TableCell>
-            <TableCell padding='checkbox' align='center'>
-              <IconButton style={{ outline: 'none' }}>
-                <EditIcon style={{ color: '' }} />
-              </IconButton>
-            </TableCell>
-          </TableRow>
-        ))}
-      </Table>
-    </TableContainer>
+    <div style={{ height: 400, width: '100%' }}>
+    <DataGrid rows={rows} columns={columns} pageSize={5} 
+    checkboxSelection 
+    onSelectionModelChange={(newSelection) => {
+      console.log('newSelection', newSelection);
+    setSelectionModel(newSelection);
+  }}
+  selectionModel={selectionModel}/>
+  </div>
+    // <TableContainer component={Paper}>
+    //   <Table className={classes.table} aria-label='simple table'>
+    //     <TableRow>
+    //       <TableCell padding='checkbox'>
+    //         <Checkbox
+    //           onChange={(e) => checkAll(e.target.checked)}
+    //           color='primary'
+    //         />
+    //       </TableCell>
+    //       <TableCell style={{ fontWeight: 'bold' }}>Id</TableCell>
+    //       <TableCell style={{ fontWeight: 'bold' }}>Naziv proizvoda</TableCell>
+    //       <TableCell style={{ fontWeight: 'bold' }}>Opis proizvoda</TableCell>
+    //       <TableCell style={{ fontWeight: 'bold' }}>Vrijeme</TableCell>
+    //       <TableCell style={{ fontWeight: 'bold' }}>Obrisi</TableCell>
+    //       <TableCell style={{ fontWeight: 'bold' }}>Uredi</TableCell>
+    //     </TableRow>
+    //     {check.map((item, i) => (
+    //       <TableRow key={i}>
+    //         <TableCell padding='checkbox'>
+    //           <Checkbox
+    //             color='default'
+    //             //style={{ color: 'green' }}
+    //             //indeterminate
+    //             disabled={false}
+    //             disableRipple={false}
+    //             checked={item.checked}
+    //             onChange={(e) => checkOne(item.id)}
+    //           />
+    //         </TableCell>
+    //         <TableCell>{item.id}</TableCell>
+    //         <TableCell>{item.imeRecepta}</TableCell>
+    //         <TableCell>{item.opisRecepta}</TableCell>
+    //         <TableCell>{item.vrijeme}</TableCell>
+    //         <TableCell padding='checkbox'>
+    //           <IconButton style={{ outline: 'none' }}>
+    //             <DeleteIcon />
+    //           </IconButton>
+    //         </TableCell>
+    //         <TableCell padding='checkbox' align='center'>
+    //           <IconButton style={{ outline: 'none' }}>
+    //             <EditIcon style={{ color: '' }} />
+    //           </IconButton>
+    //         </TableCell>
+    //       </TableRow>
+    //     ))}
+    //   </Table>
+    // </TableContainer>
   )
 }
