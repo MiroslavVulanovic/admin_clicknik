@@ -1,7 +1,7 @@
 import DeleteIcon from '@material-ui/icons/Delete'
 import EditIcon from '@material-ui/icons/Edit'
 import { useEffect, useState } from 'react'
-import { DataGrid, GridToolbar } from '@material-ui/data-grid'
+import { DataGrid } from '@material-ui/data-grid'
 import axios from 'axios'
 
 const url = 'http://localhost:3000/quotes'
@@ -78,7 +78,7 @@ const TeachingsList = () => {
         objectOfStates.pageSize +
         '&offset=' +
         objectOfStates.currentPage * objectOfStates.pageSize
-    )
+    );
     setObjectOfStates({
       ...objectOfStates,
       post: [...objectOfStates.post, ...quotes.data.data],
