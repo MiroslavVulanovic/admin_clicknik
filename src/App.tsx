@@ -10,7 +10,7 @@ import ProductsList from './components/ProductsList.js'
 import NewProduct from './components/NewProduct'
 import RecipesList from './components/RecipesList.js'
 import NewRecipe from './components/NewRecipe'
-import TeachingsList from './components/TeachingsList.js'
+import Quotes from './components/Quotes.js'
 import NewTeaching from './components/NewTeaching'
 import EventsList from './components/EventsList'
 import NewEvent from './components/NewEvent'
@@ -48,11 +48,7 @@ const App = () => {
               path='/receips/addnew'
               component={NewRecipe}
             />
-            <ProtectedRoute
-              exact
-              path='/teachings/list'
-              component={TeachingsList}
-            />
+            <ProtectedRoute exact path='/teachings/list' component={Quotes} />
             <ProtectedRoute
               exact
               path='/teachings/addnew'
