@@ -40,7 +40,7 @@ const Navbar = (props: any) => {
 				<MenuItem
 					onClick={() => {
 						handleClose();
-						auth.logout(() => {
+						auth.logout().then(() => {
 							props.history.push('/');
 						});
 					}}
