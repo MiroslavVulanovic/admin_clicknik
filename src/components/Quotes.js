@@ -4,17 +4,21 @@ import { useEffect, useState } from 'react'
 import { DataGrid } from '@material-ui/data-grid'
 import axios from 'axios'
 import TextField from '@material-ui/core/TextField'
-import Autocomplete from '@material-ui/lab/Autocomplete'
+
 import Button from '@material-ui/core/Button'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogActions from '@material-ui/core/DialogActions'
 import Dialog from '@material-ui/core/Dialog'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import Snackbar from '@material-ui/core/Snackbar'
+import Alert from '@material-ui/lab/Alert'
 
 const url = 'http://localhost:3000/quotes'
 
 const Quotes = (prop) => {
+  const [alertOpen, setAlertOpen] = useState(false)
+  const [numOfDelete, setNumOfDelete] = useState(0)
   const [loading, setLoading] = useState(false)
   const [id, setId] = useState('')
   const [openDialog, setOpenDialog] = useState(false)
@@ -24,6 +28,9 @@ const Quotes = (prop) => {
     totalItems: 10,
     currentPage: 0,
   })
+  const [offset, setOffset] = useState(
+    objectOfStates.currentPage * (objectOfStates.pageSize * 2) - numOfDelete
+  )
   const editButton = (params) => {
     return (
       <button className='focus:outline-none'>
@@ -94,15 +101,11 @@ const Quotes = (prop) => {
   const fetchData = () => {
     setLoading(true)
     axios(
-      url +
-        '?perPage=' +
-        objectOfStates.pageSize +
-        '&offset=' +
-        objectOfStates.currentPage * objectOfStates.pageSize
+      url + '?perPage=' + objectOfStates.pageSize * 2 + '&offset=' + offset
     ).then((quotes) => {
       setObjectOfStates({
         ...objectOfStates,
-        post: objectOfStates.post.concat(quotes.data.data),
+        post: [...objectOfStates.post, ...quotes.data.data],
         totalItems: quotes.data.itemsTotal,
       })
       setLoading(false)
@@ -111,8 +114,13 @@ const Quotes = (prop) => {
   const changePage = (params) => {
     if (params.page > objectOfStates.currentPage) {
       setObjectOfStates({ ...objectOfStates, currentPage: params.page })
+      setOffset(
+        (objectOfStates.currentPage + 1) * (objectOfStates.pageSize * 2) -
+          numOfDelete
+      )
     }
   }
+
   useEffect(() => {
     fetchData()
   }, [objectOfStates.currentPage])
@@ -124,7 +132,7 @@ const Quotes = (prop) => {
         headers: {
           authorization:
             'Bearer ' +
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkFudG9uaWplIiwiaWF0IjoxNjIzNzg0MDEwLCJleHAiOjE2MjM3ODc2MTB9.dyCmZE97SSRqlbv6gAGpAzBVwcr0lteFuWXsam1fTnw',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkFudG9uaWplIiwiaWF0IjoxNjI1MzAzNTgwLCJleHAiOjE2MjUzMDcxODB9.IdM8nkqOTF7nHT9hF9cbljlnYwuA8EvLEqS6JJvGnWE',
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
@@ -133,44 +141,50 @@ const Quotes = (prop) => {
         let newArrayOfPost = objectOfStates.post.filter(
           (item) => item.id !== id
         )
-
         setObjectOfStates({
           ...objectOfStates,
           post: newArrayOfPost,
           totalItems: objectOfStates.totalItems - 1,
         })
-        setLoading(false)
+        setNumOfDelete(numOfDelete + 1)
         handleClose()
       })
-    /* .catch((error) => console.log(error))
-    setLoading(false)
-    handleClose() */
+
+      .catch((error) => {
+        setAlertOpen(true)
+        console.log(error)
+        handleClose()
+      })
   }
-  console.log(objectOfStates.pageSize)
+
   return (
     <div className='container bg-blue-100 h-full'>
-      <div className='flex justify-start mx-12 mt-4'>
-        <Autocomplete
-          id='combo-box-demo'
-          options={[
-            {
-              id: 4,
-              title: 'Химна љубави',
-              content:
-                '1. Ако језике човјечије и анђеоске говорим, а љубави немам, онда сам као звоно које јечи, или кимвал који звечи.\n',
-              author: 'Св. апостол Павле',
-              filename:
-                'http://localhost:3000/upload/images/ae3686268b4b3e95c6bb5e8c64685419-SLIKA 18.jpg',
-              createdAt: '2021-04-13T17:53:10.625Z',
-              updatedAt: '2021-04-13T17:53:10.625Z',
-            },
-          ]}
-          getOptionLabel={(option) => option.title}
-          style={{ width: 300 }}
-          renderInput={(params) => (
-            <TextField {...params} label='Search' variant='outlined' />
-          )}
-        />
+      {alert && (
+        <Snackbar
+          open={alertOpen}
+          autoHideDuration={5000}
+          onClose={() => setAlertOpen(false)}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
+          <Alert
+            onClose={() => setAlertOpen(false)}
+            variant='filled'
+            severity='warning'
+          >
+            Problem sa mrezom!
+          </Alert>
+        </Snackbar>
+      )}
+      <div className='flex justify-between mx-4 mt-4'>
+        <TextField
+          size='small'
+          variant='outlined'
+          label='Search'
+          type='search'
+        ></TextField>
+        <Button variant='contained' color='primary'>
+          Delete
+        </Button>
       </div>
       <div className='bg-gray-400 mt-4 mx-4 shadow-xl' style={{ height: 400 }}>
         <DataGrid
@@ -201,14 +215,6 @@ const Quotes = (prop) => {
           <DialogContentText id='alert-dialog-description'>
             Da li zelite da izbrisete ovu pouku?
           </DialogContentText>
-          {loading && (
-            <CircularProgress
-              className='ml-28 absolute'
-              disableShrink
-              size={40}
-              value={50}
-            />
-          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color='secondary'>
@@ -221,15 +227,10 @@ const Quotes = (prop) => {
             color='primary'
             autoFocus
           >
-            Da
+            {loading ? <CircularProgress size={20} value={50} /> : 'Da'}
           </Button>
         </DialogActions>
       </Dialog>
-      <div className='ml-4 mt-4'>
-        <Button variant='contained' color='primary'>
-          Delete
-        </Button>
-      </div>
     </div>
   )
 }
