@@ -12,6 +12,7 @@ const NewTeaching = () => {
 		author: '',
 		content: '',
 		file: null,
+		// previewImage: ''
 	});
 
 	const handleChange = (event: { target: { name: any; value: any } }) => {
@@ -22,8 +23,16 @@ const NewTeaching = () => {
 
 	const handleSubmit = async () => {
 		let token = localStorage.getItem('somina_token');
+		const formData = new FormData();
+		Object.entries(inputsObject).forEach((key, value) => {
+			console.log(key, value);
+				formData.append(key[0], key[1] as any);
+
+			// }
+		})
+		// delete formData.previewImage;
 		await axios
-			.post('http://localhost:3000/quotes', inputsObject, {
+			.post('http://localhost:3000/quotes', formData, {
 				headers: {
 					Authorization: `Bearer ${token}`,
 				},
@@ -38,7 +47,8 @@ const NewTeaching = () => {
 			return;
 		}
 		let key = event.target.name;
-		let value = URL.createObjectURL(event.target.files[0]);
+		let value = event.target.files[0];
+		// let previewImage =  URL.createObjectURL(event.target.files[0]);
 		setInputsObject({ ...inputsObject, [key]: value });
 		// console.log(event.target.files[0]);
 	};
