@@ -17,6 +17,7 @@ import Alert from '@material-ui/lab/Alert'
 const url = 'http://localhost:3000/quotes'
 
 const Quotes = (prop) => {
+  const [selectedId, setSelectedId] = useState([])
   const [alertOpen, setAlertOpen] = useState(false)
   const [numOfDelete, setNumOfDelete] = useState(0)
   const [loading, setLoading] = useState(false)
@@ -85,13 +86,13 @@ const Quotes = (prop) => {
       headerName: 'Uredi',
       sortable: false,
       align: 'center',
-      width: 70,
+      width: 50,
       renderCell: editButton,
     },
     {
       field: 'Obrisi',
       headerName: 'Obrisi',
-      width: 70,
+      width: 50,
       align: 'center',
       renderCell: deleteButton,
       sortable: false,
@@ -103,6 +104,7 @@ const Quotes = (prop) => {
     axios(
       url + '?perPage=' + objectOfStates.pageSize * 2 + '&offset=' + offset
     ).then((quotes) => {
+      console.log('Bla ', quotes)
       setObjectOfStates({
         ...objectOfStates,
         post: [...objectOfStates.post, ...quotes.data.data],
@@ -125,36 +127,50 @@ const Quotes = (prop) => {
     fetchData()
   }, [objectOfStates.currentPage])
 
-  const deleteItem = () => {
+  const deleteItem = (someId) => {
     setLoading(true)
-    axios
-      .delete(url + '/' + id, {
+    return axios
+      .delete(url + '/' + someId, {
         headers: {
-          authorization:
-            'Bearer ' +
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkFudG9uaWplIiwiaWF0IjoxNjI1MzAzNTgwLCJleHAiOjE2MjUzMDcxODB9.IdM8nkqOTF7nHT9hF9cbljlnYwuA8EvLEqS6JJvGnWE',
+          authorization: 'Bearer ' + localStorage.getItem('somina_token'),
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
       })
-      .then((res) => {
-        let newArrayOfPost = objectOfStates.post.filter(
-          (item) => item.id !== id
-        )
+      .then(() => {
+        let newPosts = objectOfStates.post.filter((item) => item.id !== id)
         setObjectOfStates({
           ...objectOfStates,
-          post: newArrayOfPost,
+          post: newPosts,
           totalItems: objectOfStates.totalItems - 1,
         })
         setNumOfDelete(numOfDelete + 1)
         handleClose()
       })
+  }
+  const deleteSelected = () => {
+    const promArr = []
 
-      .catch((error) => {
-        setAlertOpen(true)
-        console.log(error)
-        handleClose()
+    selectedId.forEach((elem) => {
+      const deleteResult = deleteItem(elem)
+      promArr.push(deleteResult)
+    })
+
+    Promise.all(promArr).then(() => {
+      const newPost = objectOfStates.post.filter((elem) => {
+        if (selectedId.indexOf(elem.id) === -1) {
+          return elem
+        }
       })
+
+      setObjectOfStates({
+        ...objectOfStates,
+        post: newPost,
+        totalItems: objectOfStates.totalItems - selectedId.length,
+      })
+      setNumOfDelete(selectedId.length)
+      setSelectedId([])
+    })
   }
 
   return (
@@ -182,8 +198,8 @@ const Quotes = (prop) => {
           label='Search'
           type='search'
         ></TextField>
-        <Button variant='contained' color='primary'>
-          Delete
+        <Button onClick={deleteSelected} variant='contained' color='primary'>
+          bulk Delete
         </Button>
       </div>
       <div className='bg-gray-400 mt-4 mx-4 shadow-xl' style={{ height: 400 }}>
@@ -205,7 +221,11 @@ const Quotes = (prop) => {
           // }}
           //pagination
           //autoHeight
-          onRowSelected={(e) => console.log(e.data.id)}
+          onRowSelected={(item) => {
+            let newArrayOfSelected = [...selectedId]
+            newArrayOfSelected.push(item.data.id)
+            setSelectedId(newArrayOfSelected)
+          }}
           disableSelectionOnClick
           //disableColumnSelector
         />
@@ -217,12 +237,19 @@ const Quotes = (prop) => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color='secondary'>
-            Ne
-          </Button>
+          {loading ? (
+            <Button disabled onClick={handleClose} color='secondary'>
+              Ne
+            </Button>
+          ) : (
+            <Button onClick={handleClose} color='secondary'>
+              Ne
+            </Button>
+          )}
+
           <Button
-            onClick={() => {
-              deleteItem()
+            onClick={(someId) => {
+              deleteItem(id)
             }}
             color='primary'
             autoFocus
@@ -235,3 +262,6 @@ const Quotes = (prop) => {
   )
 }
 export default Quotes
+// loader kad 2 puta stisnem next
+//vise od 5 izbrisanih
+//
